@@ -1,2 +1,3 @@
-# Mars-simulation
-Das Projekt für mein Hauptprojekt und später die Masterarbeit
+# Drone-simulation
+Dieses Projekt enthält die Simulatonsumgebung die ich mithilfe des MARS Frameworks for mein Hauptprojekt umgesetzt habe.
+

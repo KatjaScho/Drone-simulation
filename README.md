@@ -28,14 +28,14 @@ The model of the simulation environment consists of the following elements:
 ## How to use this project
 ### Setup and Configuration options
 
-#### Step 1: Setup
+### Step 1: Setup
 - First of all you need an working environment to run MARS simulations. Therefor you need to install the .NET-SDK on your computer and an Integrated Development Environment (IDE). The easiest way is to install JetBrains Rider. For more information about the overall setup you can have a look [here](https://www.mars-group.org/docs/tutorial/installation)
 - Furthermore you need docker on your machine if you want to run the visualisation.
 - Than you can checkout this repository and open it with rider
 
-#### Step 2: Using a different map
+### Step 2: Using a different map
 
-##### Preparation of files
+#### Preparation of files
 - Follow the instruction on the [MARS documentation](https://mars.haw-hamburg.de/articles/core/tutorials/create_vector_layer_raster_layer.html) to get the geo referenced raster data
   - This process will create a .geojson file and a .asc file both will be needed
 - To create new start positions of the agents and signals in your area we need new configuration files for both
@@ -46,7 +46,7 @@ The model of the simulation environment consists of the following elements:
 - The `prepare_signals.ipynb`  will create new random signal positions and safes them to a geojson file. 
   - Here, you also need to change the path and the number of signals you want
   
-#### Step 3: Configuration of Simulation
+### Step 3: Configuration of Simulation
 
 - The configuration of the simulation is located in the `config.json` file 
 - If you created a new map you need to change the path for the different layers according to the location of your files
@@ -56,12 +56,13 @@ The model of the simulation environment consists of the following elements:
 - If you want a different number of agents in the simulation you have ot change `count`
   - NOTE This number needs to be equals or smaller to the number_of_start_positions when creating the csv file
 
-#### Step 4: Run Simulation
+### Execution and result
+### Step 4: Run Simulation
 
 - To run the simulation open the DroneSimulation.sln file with rider and run it
 - This will create a movement file in the `bin/Debug/net6.0` folder which can be visualized.
 
-#### Step 5: Analysis
+### Step 5: Analysis
 
 - There is a third .ipynb file the analyze.ipynb. 
 - This can be run to create

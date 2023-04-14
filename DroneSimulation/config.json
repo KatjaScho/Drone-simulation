@@ -1,0 +1,34 @@
+{
+  "globals": {
+    "deltaT": 1,
+    "startPoint": "2023-03-10T00:00:00",
+    "endPoint": "2023-03-10T07:59:59",
+    "deltaTUnit": "seconds",
+    "console": false,
+    "output": "csv",
+    "options": {
+      "delimiter": ";",
+      "format": "en-EN"
+    }
+  },
+  "layers": [
+    {
+      "name": "Perimeter",
+      "file": "Resources/area.asc"
+    },
+    {
+      "name":"SignalLayer",
+      "file":"Resources/test_signals.geojson"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Drone",
+      "count": 4,
+      "file":"Resources/start_positions.csv",
+      "outputs": [
+        {"kind": "trips"}
+      ]
+    }
+  ]
+}

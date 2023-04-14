@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "signal": "Signal_1", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.502456067860443, 53.390023285293687 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_2", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.509106349976841, 53.410680917699082 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_3", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.48878204651896, 53.380202791171605 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_4", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.52212848529464, 53.388735368972156 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_5", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.429794347840419, 53.432279947557461 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_6", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.574289901281677, 53.395089444907036 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_7", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.553878993506171, 53.393362737077382 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_8", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.492100145254639, 53.383099218165164 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_9", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.562799346570992, 53.407291595864066 ] } },
+{ "type": "Feature", "properties": { "signal": "Signal_10", "located": "false" }, "geometry": { "type": "Point", "coordinates": [ 10.525618947581549, 53.402103597187498 ] } }
+]
+}

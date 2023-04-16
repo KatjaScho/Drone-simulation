@@ -22,7 +22,7 @@ The model for the simulation environment consists of the following elements:
 - `MapLayer`: Registers the agent to the given area in the _Resource_ folder
 - `Perimeter` Contains the .asc file from the _Resource_ folder with the area the drones are allowed to move on. 
 - `SignalLayer`: A vector layer with the signal information from the `test_signals.geojson` file in the _Resource_ folder
-- `SimpleDecisionUnit`: A simple implementation of the `IDecisionUnit`. This is currently used to control the agent. THis decision unit tries based on basic mathematic operations to move the agent to the same signal as the other agents and then position arount the signal. This decision unit has no collision avoidance mechanism and no smart way to act when he leaves the allowed area.
+- `SimpleDecisionUnit`: A simple implementation of the `IDecisionUnit`. This is currently used to control the agent. This decision unit tries based on basic mathematic operations to move the agent to the same signal as the other agents and then position arount the signal. This decision unit has no collision avoidance mechanism and no smart way to act when he leaves the allowed area.
 - `Program.cs`: Creates the entire model and starts the simulation
 
 ## How to use this project

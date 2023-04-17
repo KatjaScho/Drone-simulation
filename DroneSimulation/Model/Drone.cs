@@ -86,7 +86,7 @@ public class Drone : IAgent<MapLayer>, IPositionable
 
     public void Init(MapLayer layer)
     {
-       // Check if the starting point is inside the perimeter. THe position is specified in the input csv file.
+       // Check if the starting point is inside the perimeter. The position is specified in the input .csv file.
        if (!Perimeter.IsPointInside(new Position(Longitude, Latitude))) 
        {
             throw new Exception("Start point is not inside perimeter.");
@@ -151,8 +151,8 @@ public class Drone : IAgent<MapLayer>, IPositionable
     private double _waitingBearing = 0;
     private void Waiting()
     {
-        //For some reason kepler only shows the agents when they move, as soon as the position stays the same they disappear
-        //from the map. To deal with this the agents move minimally in place when they are waiting. 
+        // For some reason kepler only shows the agents when they move. As soon as the position stays the same they disappear
+        // from the map. To deal with this the agents move minimally in place when they are waiting. 
         _waitingBearing = (_waitingBearing + 90) % 360;
         Position = Layer.Environment.MoveTowards(this, _waitingBearing, 0.1);
     }

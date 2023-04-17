@@ -12,14 +12,14 @@ namespace DroneSimulation.Model;
 public interface IDecisionUnit
 {
     /// <summary>
-    /// This method should calculate depending on the given information the new state of the drone
+    /// This method should calculate the new state of the drone, depending on the given information.
     ///
     /// </summary>
     /// <param name="signalLayer"></param> A Layer which contains all relevant information about the signals
     /// <param name="perimeter"></param> The perimeter the drone moves on
-    /// <param name="position"></param> THe current position of the drone 
+    /// <param name="position"></param> The current position of the drone 
     /// <param name="allDronePositions"></param> A dictionary which contains all drones and there positions
-    /// <returns> THe next state of the drone</returns>
+    /// <returns> The next state of the drone</returns>
     public DroneStates Decide(SignalLayer signalLayer, Perimeter perimeter, 
         Position position,Dictionary<string,Drone> allDronePositions);
     

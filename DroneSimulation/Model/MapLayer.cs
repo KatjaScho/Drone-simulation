@@ -31,7 +31,7 @@ public class MapLayer : AbstractLayer
     #endregion
     
     /// <summary>
-    /// This registers all drone agents, this is needed to call the tick method of the agents.
+    /// This registers all drone agents. This needs to call the tick method of the agents.
     /// Furthermore the expansion of the simulation area is calculated using
     /// the raster layers described in config.json. An environment is created with this bounding box.
     /// </summary>

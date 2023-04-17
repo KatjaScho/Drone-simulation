@@ -29,7 +29,9 @@ The model for the simulation environment consists of the following elements:
 ### Setup and configuration options
 
 ### Step 1: Setup
-- First of all you need an working environment to run MARS simulations. Therefor you need to install the .NET-SDK on your computer and an Integrated Development Environment (IDE). The easiest way is to install JetBrains Rider. For more information about the overall setup you can have a look [here](https://www.mars-group.org/docs/tutorial/installation)
+- First of all you need an working environment to run MARS simulations. Therefor you need to install the .NET-SDK on your computer
+- If you want to make changes in the simulation model you also need an Integrated Development Environment (IDE). The easiest way is to install JetBrains Rider
+- For more information about the overall setup you can have a look [here](https://www.mars-group.org/docs/tutorial/installation)
 - Furthermore, you need docker on your machine if you want to run the visualisation
 - Than you can checkout this repository and open it with rider
 
@@ -59,8 +61,14 @@ The model for the simulation environment consists of the following elements:
 ### Execution and result
 ### Step 4: Run simulation
 
+#### With Rider
 - To run the simulation open the DroneSimulation.sln file with rider and run it
 - This will create a movement file in the `bin/Debug/net6.0` folder which can be visualized
+
+#### Without Rider
+- First use the ´run´ skript in the _DroneSimulation_ folder. This will build the project and run a simulation, but it doesnt creates the trips output file which is need for the visualisation
+- But now there is a _\bin\Debug\net6.0_ folder with a ´DroneSimulation.exe´ 
+  - Run the DroneSimulation.exe because this will run a simulation and create the drone_trips output file
 
 ### Step 5: Analysis
 

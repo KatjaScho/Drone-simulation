@@ -75,7 +75,8 @@ public class SimpleDecisionUnit : IDecisionUnit
     private int _durationNeededForLocating;
     private int _droneCountAtSameTarget;
     private Dictionary<string, Drone> _droneAtSameTargetList;
-
+    private int _ticksSinceLeftOfArea;
+    
     public SimpleDecisionUnit(string droneName)
     {
         _droneName = droneName;
@@ -118,12 +119,29 @@ public class SimpleDecisionUnit : IDecisionUnit
             if (!(perimeter.IsPointInside(dronePosition)))
             {
                 // We left the permitted area, so change bearing to hopefully get back in it.
-                _bearing = dronePosition.GetBearing(_targetPosition)+45;
+                if (_ticksSinceLeftOfArea<15)
+                {
+                    //The permitted area has not been left for long, so keep trying to avoid the obstacle 
+                    _bearing = (dronePosition.GetBearing(_targetPosition)+160)%360;
+                    _ticksSinceLeftOfArea++;
+                }
+                else if (_ticksSinceLeftOfArea < 30)
+                {
+                    _bearing = (dronePosition.GetBearing(_targetPosition)-160)%360;
+                    _ticksSinceLeftOfArea++;
+                }
+                else
+                {
+                     // The drone appears to have drifted off course therefore on a direct return path 
+                     _bearing = dronePosition.GetBearing(_targetPosition);
+                }
+                
                 _currentState = DroneStates.MoveTowards;
                 return _currentState;
             }
-            
 
+            _ticksSinceLeftOfArea = 0;
+            
             // SUMMARY: Phase 1 --> We have a target to move to and are in the permitted area.
             // Next check: Do we reached the target already?
             if (_targetPosition.DistanceInMTo(dronePosition) < DistanceToTarget)

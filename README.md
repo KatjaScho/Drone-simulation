@@ -39,7 +39,11 @@ The model for the simulation environment consists of the following elements:
 
 #### Preparation of files
 - Follow the instructions on the [MARS documentation](https://mars.haw-hamburg.de/articles/core/tutorials/create_vector_layer_raster_layer.html) to get the geo referenced raster data
-  - If there should be obstacles you need to add them during creation of the grid layer
+  - If there should be obstacles you need to add them during the creation of the grid layer
+    - For this you need to create a second vector layer with the areas that should be excluded from the allowed area
+    - Than select > Processing (Verarbeitung) > Toolbox (Werkzeugkiste) > Vectorlayeroverlapping (Vektorlayerüberlagerung) > Difference (Differnez) 
+    - The input layer is the layer with the allowed area and the overlapping layer is the layer with the obstacles
+    - Let the difference be saved to a temporarylayer and use this layer to continue with the tutorial above
   - This process will create a .geojson file and a .asc file, both will be needed
 - To create new start positions for the agents and signals, new configuration files for both are needed
 - For this you need a jupyter notebook

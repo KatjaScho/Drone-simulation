@@ -20,9 +20,10 @@ The model for the simulation environment consists of the following elements:
 - `DroneStates`: This enum holds the different states the drone has. Every state describes a different functionality of the drone.
 - `IDecisionUnit`: This Interface describes the control of the drone. The decision unit gets the positions of every drone, the signal positions and the area they move on for every tick to decide the next action of the drone based on the drone states.
 - `MapLayer`: Registers the agent to the given area in the _Resource_ folder
-- `Perimeter` Contains the .asc file from the _Resource_ folder with the area the drones are allowed to move on. 
+- `Perimeter` Contains the .asc file from the _Resource_ folder with the area the drones are allowed to move on.
+- `ElevationLayer` Contains the .asc file from the _Resource_ folder with the elevation information.
 - `SignalLayer`: A vector layer with the signal information from the `test_signals.geojson` file in the _Resource_ folder
-- `SimpleDecisionUnit`: A simple implementation of the `IDecisionUnit`. This is currently used to control the agent. This decision unit tries based on basic mathematic operations to move the agent to the same signal as the other agents and then position around the signal. This decision unit has no collision avoidance mechanism and no smart way to act when he leaves the allowed area.
+- `SimpleDecisionUnit`: A simple implementation of the `IDecisionUnit`. This is currently used to control the agent. This decision unit tries based on basic mathematic operations to move the agent to the same signal as the other agents and then position around the signal. This decision unit has no collision avoidance mechanism and no smart way to act when he leaves the allowed area or runaround obstacles.
 - `Program.cs`: Creates the entire model and starts the simulation
 
 ## How to use this project
@@ -39,11 +40,15 @@ The model for the simulation environment consists of the following elements:
 
 #### Preparation of files
 - Follow the instructions on the [MARS documentation](https://mars.haw-hamburg.de/articles/core/tutorials/create_vector_layer_raster_layer.html) to get the geo referenced raster data
-  - If there should be obstacles you need to add them during the creation of the grid layer
-    - For this you need to create a second vector layer with the areas that should be excluded from the allowed area
-    - Than select > Processing (Verarbeitung) > Toolbox (Werkzeugkiste) > Vectorlayeroverlapping (Vektorlayerüberlagerung) > Difference (Differnez) 
-    - The input layer is the layer with the allowed area and the overlapping layer is the layer with the obstacles
-    - Let the difference be saved to a temporarylayer and use this layer to continue with the tutorial above
+  - If there should be obstacles there are two Options
+    - Option 1: They can be add during the creation of the grid layer
+      - For this you need to create a second vector layer with the areas that should be excluded from the allowed area
+      - Than select > Processing (Verarbeitung) > Toolbox (Werkzeugkiste) > Vectorlayeroverlapping (Vektorlayerüberlagerung) > Difference (Differnez) 
+      - The input layer is the layer with the allowed area and the overlapping layer is the layer with the obstacles
+      - Let the difference be saved to a temporarylayer and use this layer to continue with the tutorial above
+    - Option 2: A Grid Layer with elevation data can be used  
+      - This file can be created with QGis, a tutorial can be found [here](https://www.gis-lernen.de/gk-l4-mit-hoehendaten-arbeiten/)
+    - If you dont want to use elevation data ControlHeight variable in the drone model need to be set to false   
   - This process will create a .geojson file and a .asc file, both will be needed
 - To create new start positions for the agents and signals, new configuration files for both are needed
 - For this you need a jupyter notebook
@@ -58,6 +63,7 @@ The model for the simulation environment consists of the following elements:
 - The configuration of the simulation is located in the `config.json` file 
 - If you created a new map you need to change the path for the different layers according to the location of your files
   - The perimeter needs the .asc file you created at the beginning of step 2
+  - The elevation layer needs a .asc file with elevation data. This must also refer to some asc file even if no height control is used In this case the data in the file does not matter
   - The signal layer needs the generated .geojson file
 - Also you need to change the configuration file of the agent to the created configuration
 - If you want a different number of agents in the simulation you have to change `count`

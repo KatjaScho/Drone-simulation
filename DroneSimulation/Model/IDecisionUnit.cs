@@ -17,10 +17,11 @@ public interface IDecisionUnit
     /// </summary>
     /// <param name="signalLayer"></param> A Layer which contains all relevant information about the signals
     /// <param name="perimeter"></param> The perimeter the drone moves on
+    /// <param name="elevationLayer"></param> Layer with elevation information can be null
     /// <param name="position"></param> The current position of the drone 
     /// <param name="allDronePositions"></param> A dictionary which contains all drones and there positions
     /// <returns> The next state of the drone</returns>
-    public DroneStates Decide(SignalLayer signalLayer, Perimeter perimeter, 
+    public DroneStates Decide(SignalLayer signalLayer, Perimeter perimeter, ElevationLayer elevationLayer,
         Position position,Dictionary<string,Drone> allDronePositions);
     
     double GetBearing();

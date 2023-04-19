@@ -17,6 +17,10 @@
       "file": "Resources/area.asc"
     },
     {
+      "name": "ElevationLayer",
+      "file": "Resources/elevation.asc"
+    },
+    {
       "name":"SignalLayer",
       "file":"Resources/test_signals.geojson"
     }
@@ -25,7 +29,7 @@
     {
       "name": "Drone",
       "count": 4,
-      "file":"Resources/start_positions.csv",
+      "file":"Resources/droneConfig.csv",
       "outputs": [
         {"kind": "trips"}
       ]

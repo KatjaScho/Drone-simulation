@@ -1,17 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using Mars.Common;
 using Mars.Components.Layers;
 using Mars.Interfaces.Agents;
 using Mars.Interfaces.Annotations;
-using Mars.Interfaces.Data;
 using Mars.Interfaces.Environments;
-using Mars.Numerics;
-using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
-using ServiceStack;
 using Position = Mars.Interfaces.Environments.Position;
 
 namespace DroneSimulation.Model;
@@ -25,12 +17,22 @@ namespace DroneSimulation.Model;
 public class Drone : IAgent<MapLayer>, IPositionable
 {
     #region Properties and Fields
+
+    /// <summary>
+    ///     The maximum height the drone can fly above
+    /// </summary>
+    private const int MaxFlightHeight = 70;
     
     /// <summary>
     /// This dictionary is used to share the positions of all agents among themselves
     /// </summary>
     private static readonly Dictionary<string,Drone> ListDronePositions = new ();
-
+    
+    /// <summary>
+    ///     To decide if the agent should check the heights around him or not
+    /// </summary>
+    private const bool ControlHeight = true;
+    
     /// <summary>
     ///     The layer which holds the signal information
     /// </summary>
@@ -42,6 +44,12 @@ public class Drone : IAgent<MapLayer>, IPositionable
     /// </summary>
     [PropertyDescription(Name = "Perimeter")]
     public Perimeter Perimeter { get; set; }
+    
+    /// <summary>
+    ///     The layer which holds the elevation information 
+    /// </summary>
+    [PropertyDescription(Name = "ElevationLayer")]
+    public ElevationLayer ElevationLayer { get; set; }
     
     /// <summary>
     ///     The name of this agent
@@ -93,9 +101,9 @@ public class Drone : IAgent<MapLayer>, IPositionable
        }
         
        ListDronePositions.Add(DroneName,this);
-        
+       
        Position = Position.CreateGeoPosition(Longitude, Latitude);
-       DecisionUnit = new SimpleDecisionUnit(DroneName);
+       DecisionUnit = new SimpleDecisionUnit(DroneName,MaxFlightHeight);
     }
 
     #endregion
@@ -104,13 +112,15 @@ public class Drone : IAgent<MapLayer>, IPositionable
     
     public void Tick()
     {
-        var state= DecisionUnit.Decide(SignalLayer, Perimeter, 
+        
+        
+        var state= DecisionUnit.Decide(SignalLayer, Perimeter, ControlHeight?ElevationLayer:null,
             Position, ListDronePositions);
         
         switch (state) 
         {
           case DroneStates.Locating:
-              Locating();
+              MarkSignal("true");
               break;
           case DroneStates.Wait:
               Waiting();
@@ -120,6 +130,10 @@ public class Drone : IAgent<MapLayer>, IPositionable
               break;
           case DroneStates.SetNewTarget:
               _currentSignal = DecisionUnit.GetNewTarget();
+              break;
+          case DroneStates.SignalUnreachable:
+              Console.WriteLine("{0} seems to be unreachable",_currentSignal.VectorStructured.Attributes["signal"]);
+              MarkSignal("unreachable");
               break;
           default:
               Waiting();
@@ -132,23 +146,23 @@ public class Drone : IAgent<MapLayer>, IPositionable
         Position = Layer.Environment.MoveTowards(this, bearing, distance);
     }
    
-    private void Locating()
+    private void MarkSignal(string locatedValue)
     {
-        foreach (VectorFeature signal in SignalLayer)
+        foreach (var signal in SignalLayer)
         {
             if (signal.Equals(_currentSignal))
             {
                 
                 var structuredAttributes = signal.VectorStructured.Attributes;
-                structuredAttributes["located"] = "true";
+                structuredAttributes["located"] = locatedValue;
                 signal.VectorStructured.Attributes = structuredAttributes;
                 break;
             }
         }
         
     }
-
-    private double _waitingBearing = 0;
+    
+    private double _waitingBearing;
     private void Waiting()
     {
         // For some reason kepler only shows the agents when they move. As soon as the position stays the same they disappear

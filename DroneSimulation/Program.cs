@@ -21,6 +21,7 @@ internal static class Program
         var description = new ModelDescription();
         description.AddLayer<MapLayer>();
         description.AddLayer<Perimeter>();
+        description.AddLayer<ElevationLayer>();
         description.AddLayer<SignalLayer>();
 
         description.AddAgent<Drone, MapLayer>();

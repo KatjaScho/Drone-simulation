@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mars.Common;
+using Mars.Common.Collections;
 using Mars.Components.Layers;
 using Mars.Interfaces.Environments;
 using Mars.Numerics;
@@ -46,6 +47,11 @@ public class SimpleDecisionUnit : IDecisionUnit
     private readonly string _droneName;
     
     /// <summary>
+    /// The maximum heights the drone can fly above
+    /// </summary>
+    private readonly int _maximumFlightHeights;
+    
+    /// <summary>
     /// The current target for this agent
     /// </summary>
     private VectorFeature _target;
@@ -76,13 +82,15 @@ public class SimpleDecisionUnit : IDecisionUnit
     private int _droneCountAtSameTarget;
     private Dictionary<string, Drone> _droneAtSameTargetList;
     private int _ticksSinceLeftOfArea;
+    private int _ticksSinceMovingAroundElevation;
     
-    public SimpleDecisionUnit(string droneName)
+    public SimpleDecisionUnit(string droneName, int maximumFlightHeights)
     {
         _droneName = droneName;
+        this._maximumFlightHeights = maximumFlightHeights;
     }
  
-    public DroneStates Decide(SignalLayer signalLayer, Perimeter perimeter,
+    public DroneStates Decide(SignalLayer signalLayer, Perimeter perimeter,ElevationLayer elevationLayer,
         Position dronePosition, Dictionary<string,Drone> allDronePositions)
     {
         // First of all, there are two main phases for the task of the drone:
@@ -90,16 +98,15 @@ public class SimpleDecisionUnit : IDecisionUnit
         //  2. When a target is reached, the waiting and positioning part of the task (collaborative)
         // The drone switches between this two phases, depending on its current state.
         // NOTE: The second phase must not be completed successfully (target is located) to switch back.
-        
         // This needs to be checked first.
          if (!_reachedTarget) 
          {   
              // This part is phase 1.
              // If this is the first tick, we switched back from phase 2 and we need a new target.
+             
             if (_needsNewTarget)
             {
-                _target = FindNewTarget(allDronePositions, dronePosition,
-                     perimeter, signalLayer);
+                _target = FindNewTarget(allDronePositions, dronePosition, signalLayer);
                 
                 if (_target.IsEqual(null))
                 {
@@ -139,8 +146,34 @@ public class SimpleDecisionUnit : IDecisionUnit
                 _currentState = DroneStates.MoveTowards;
                 return _currentState;
             }
-
+            
+            if (elevationLayer is not null)
+            {
+                foreach (NodeDistance<K2dTreeNode<double>> nodeDistance in elevationLayer.Explore(dronePosition, 3))
+                {
+                    if (nodeDistance.Node.Value >= _maximumFlightHeights)
+                    {
+                        //if the drone tries for to long to reach the target it seems that this target is unreachable
+                        if (_ticksSinceMovingAroundElevation > 100)
+                        {
+                            _reachedTarget = false;
+                            _needsNewTarget = true;
+                            _ticksSinceLeftOfArea = 0;
+                            _ticksSinceMovingAroundElevation = 0;
+                            _currentState = DroneStates.SignalUnreachable;
+                            return _currentState;
+                        }
+                        //we need to redirect the drone a little bit to fly around the elevated areas
+                        _bearing = (dronePosition.GetBearing(_targetPosition)+160)%360;
+                        _currentState = DroneStates.MoveTowards;
+                        _ticksSinceMovingAroundElevation++;
+                        return _currentState;
+                    }
+                }
+            }
+            //There were no area or heights problems this tick so reset both counts
             _ticksSinceLeftOfArea = 0;
+            _ticksSinceMovingAroundElevation = 0;
             
             // SUMMARY: Phase 1 --> We have a target to move to and are in the permitted area.
             // Next check: Do we reached the target already?
@@ -154,7 +187,7 @@ public class SimpleDecisionUnit : IDecisionUnit
                 _currentState = DroneStates.Wait;
                 return _currentState;
             }
-            
+
             // SUMMARY: Phase 1 --> We have a target to move to, are in the permitted area and haven't reached the target yet,
             // so just move towards the target. 
             _bearing = dronePosition.GetBearing(_targetPosition);
@@ -266,7 +299,7 @@ public class SimpleDecisionUnit : IDecisionUnit
     /// <returns> Whether the drone should move in the direction of the set bearing or stay where it is</returns>
     private DroneStates CheckFormation(Dictionary<string, Drone> droneAtSameTarget, Position dronePosition)
      {
-         // With four drones the ideal positioning should be a square, therefore a quarter of the circleference is taken as the
+         // With four drones the ideal positioning should be a square, therefore a quarter of the circle circumference is taken as the
          // optimal distance between the drones.
          // To ensure that the drones could also position with more than four drones the radius of the circle is increased if there are more than four drones.
          double circumference = ((DistanceToTarget +(10*(droneAtSameTarget.Count-4)))* 2.0) * Math.PI;
@@ -369,11 +402,9 @@ public class SimpleDecisionUnit : IDecisionUnit
     /// </summary>
     /// <param name="allDronePositions"> A dictionary with all positions</param>
     /// <param name="dronePosition"> The own position</param>
-    /// <param name="perimeter"> The area the signals are in </param>
     /// <param name="signalLayer"> The signals</param>
     /// <returns> The new signal to move to or null if there is no signal</returns>
-    private VectorFeature FindNewTarget(Dictionary<string, Drone> allDronePositions, Position dronePosition,
-        Perimeter perimeter, SignalLayer signalLayer)
+    private VectorFeature FindNewTarget(Dictionary<string, Drone> allDronePositions, Position dronePosition, SignalLayer signalLayer)
     {
         double latitudeValues = 0;
         double longitudeValues = 0;
@@ -391,22 +422,24 @@ public class SimpleDecisionUnit : IDecisionUnit
         var positionToSearchFrom= new [] { averageLongitude, averageLatitude };
         
         // This position is used to explore the signal layer and get a list with all signals sorted by distance. 
-        var listSignals = signalLayer.Explore(positionToSearchFrom).ToList();
+        var listSignals = signalLayer.Explore(positionToSearchFrom,-1).ToList();
         if (listSignals.Any())
         {
-            // Fallback if all signals are located already.
-            var nearestSignal = listSignals.First();
+            // Fallback if all signals are located or unreachable already.
+            var nearestSignal = listSignals.Last();
             
             // Search for nearest signal which is not located yet.
             foreach (var signal in listSignals)
             {
-                if ((string)signal.VectorStructured.Attributes["located"] == "false")
+                
+                string signalStatus = (string)signal.VectorStructured.Attributes["located"];
+                if (signalStatus is "false")
                 {
                     nearestSignal = signal; 
                     break;
                 }
             }
-
+                
 
             // Get coordinates of this signal.
             var signalLocation = (Point)nearestSignal.VectorStructured.Geometry;
@@ -423,7 +456,7 @@ public class SimpleDecisionUnit : IDecisionUnit
         }
         else
         {
-            // If there is no signal at all
+            // If there is no signal at all.
             return null;
         }
     }

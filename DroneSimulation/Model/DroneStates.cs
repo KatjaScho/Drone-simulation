@@ -8,5 +8,6 @@ public enum DroneStates
     SetNewTarget,
     MoveTowards,
     Wait,
-    Locating
+    Locating,
+    SignalUnreachable
 }

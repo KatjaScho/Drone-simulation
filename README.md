@@ -16,7 +16,7 @@ The application consists of a geo referenced raster layer on which the agents mo
 The project consists of a C# application that runs the simulations and several Jupyter notebook files that are needed for configuration and visualisation of the results.
 
 The model for the simulation environment consists of the following elements:
-- `Drone`: The agent type in the model. It has various functionalities such as moving in a given direction or locating and is controlled via an IDecisionUnit. The used DecisionUnit is initialized in the init method of the agent. The drones are parameterized with the start_positions.csv file in the _Resources_ folder 
+- `Drone`: The agent type in the model. It has various functionalities such as moving in a given direction or locating and is controlled via an IDecisionUnit. The used DecisionUnit is initialized in the init method of the agent. The drones are parameterized with the start_positions.csv file in the _Resources_ folder. To configure the heights control there a two variables. The  _MaxFlightHeight_ configures the height that the drone can fly over and the _ControlHeight_ boolean to configure whether the heights should be checkt or not. 
 - `DroneStates`: This enum holds the different states the drone has. Every state describes a different functionality of the drone.
 - `IDecisionUnit`: This Interface describes the control of the drone. The decision unit gets the positions of every drone, the signal positions and the area they move on for every tick to decide the next action of the drone based on the drone states.
 - `MapLayer`: Registers the agent to the given area in the _Resource_ folder

@@ -1,6 +1,6 @@
 # Drone-simulation
 
-This project contains the simulation environment for my mainproject and my master thesis.
+This project contains the simulation environment for my mainproject.
 This project is used to simulate a drone swarm which locates radio signals. 
 
 The idea behind this simulation environment is that a swarm of drones, equipped with radio receivers, can locate radio signals using the TDoA method. The TDoA (Time Difference of Arrival)-method is an algorithm where the relative time difference in receiving a signal is measured at several positions and the position of the signal is calculated based on these time differences.
